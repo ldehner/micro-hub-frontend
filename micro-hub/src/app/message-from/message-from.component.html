@@ -1,1 +1,13 @@
-<p>message-from works!</p>
+<div class="container">
+    <div class="row d-flex justify-content-left">
+        <div class="col-auto p-0">
+            <app-profile-picture class="to-picture" [username]="sender"></app-profile-picture>
+        </div>
+        <div class="col-auto p-0 ms-2">
+            <span class="to-name"><b>{{ sender }}</b></span>
+            <div class="row msg">
+                <p>{{ msg }}</p>
+            </div>
+        </div>
+    </div>
+</div>
