@@ -1,5 +1,5 @@
 export interface Message {
     content: string;
-    type: 'from' | 'to' | 'info';
+    type: 'from' | 'to' | 'leave' | 'join';
     sender: string;
   }

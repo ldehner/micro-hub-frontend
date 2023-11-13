@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-12">
+        <div [ngClass]="{
+          'alert-success': connectionStatus === 'connected',
+          'alert-danger': connectionStatus === 'error',
+          'alert-warning': connectionStatus === 'not connected'
+        }" class="alert" role="alert">
+          <p>Connection Status: {{ connectionStatus }}</p>
+        </div>
+  
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-12">
+        <div class="input-group flex-nowrap">
+  
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="addon-wrapping">Username</span>
+        <input [(ngModel)]="username" type="text" class="form-control" placeholder="Username" aria-label="Username"
+          aria-describedby="addon-wrapping">
+        <span class="input-group-text" id="basic-addon3">Server</span>
+  
+        <select class="form-select" id="inputGroupSelect01">
+          <option selected>ws</option>
+          <option value="1">wss</option>
+          <option value="2">http</option>
+          <option value="3">https</option>
+        </select>
+        <label class="input-group-text" for="inputGroupSelect01">://</label>
+        <input [(ngModel)]="ip" type="text" value="127.0.0.1" class="form-control" placeholder="Server-Adress"
+          aria-label="Server-Adress" aria-describedby="basic-addon3">
+        <span class="input-group-text">:</span>
+        <input [(ngModel)]="port" value="8080" type="text" class="form-control" placeholder="Port" aria-label="Port"
+          aria-describedby="button-addon">
+        <button (click)="connect()" class="btn btn-outline-primary" type="button" id="button-addon">Connect</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-12">
+        <div #scrollContainer class="messages">
+          <h1>MicroHub</h1>
+          <hr>
+          <div *ngFor="let message of messages">
+            <app-message-from *ngIf="message.type === 'from'" [sender]="message.sender"
+              [msg]="message.content"></app-message-from>
+            <app-message-to *ngIf="message.type === 'to'" [msg]="message.content"></app-message-to>
+            <app-message-join *ngIf="message.type === 'join'" [user]="message.sender"></app-message-join>
+            <app-message-leave *ngIf="message.type === 'leave'" [user]="message.sender"></app-message-leave>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group mb-3">
+        <input [(ngModel)]="message" type="text" class="form-control" placeholder="Message" aria-label="Message"
+          aria-describedby="button-addon2">
+        <button (click)="sendMessage()" class="btn btn-primary" type="button" id="button-addon2">Send</button>
+      </div>
+  
+    </div>
+  
+  </div>
+  <router-outlet></router-outlet>

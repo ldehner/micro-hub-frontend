@@ -10,6 +10,5 @@ import { CommonModule } from '@angular/common';
 })
 export class MessageJoinComponent {
 @Input() user: any;
-@Input() status: any;
 
 }

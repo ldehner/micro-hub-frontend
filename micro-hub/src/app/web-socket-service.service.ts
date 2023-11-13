@@ -7,26 +7,51 @@ import { Subject } from 'rxjs';
 })
 export class WebSocketService {
   private client!: Client;
-  private myMethodSubject = new Subject<any>();
+  private publicSubscription = new Subject<any>();
+  private userSubscription = new Subject<any>();
   private ip: string = '';
   private port: string = '';
   private username: string = '';
 
-  myMethodCalled$ = this.myMethodSubject.asObservable();
+  publicSubscription$ = this.publicSubscription.asObservable();
+  userSubscription$ = this.userSubscription.asObservable();
 
   constructor() {
   }
 
-  private registerStompListeners(): void {
+  private registerStompListeners(): boolean {
+    var ret = false;
     this.client.onConnect = (frame: IFrame) => {
       console.log('Connected: ' + frame);
-      this.client.subscribe("/topic/public", (msg) => this.myMethodSubject.next(msg.body));
+      this.client.subscribe("/topic/public", (msg) => this.publicSubscription.next(msg.body));
+      this.client.subscribe("/user/queue/reply", (message) => {
+        if (message.body) {
+          console.log("Queue");
+          let body = JSON.parse(message.body);
+          body.forEach((element: {
+            content: any;
+            type: any; sender: any;
+          }) => {
+            var message = {
+              sender: element.sender,
+              content: element.content,
+              type: element.type
+            };
+            this.userSubscription.next(JSON.stringify(message));
+            console.log(element.sender);
+          });
+          console.log(body);
+          // Handle the received message body
+        }
+      });
+      this.sendMessage('/app/chat.getAllMessages', '');
       var joinMessage = {
         sender: this.username,
         content: '',
         type: 'JOIN'
       };
       this.sendMessage('/app/chat.addUser', JSON.stringify(joinMessage));
+      ret = true;
     };
 
     this.client.onStompError = (frame: IFrame) => {
@@ -37,6 +62,7 @@ export class WebSocketService {
     this.client.onDisconnect = () => {
       console.log('Disconnected');
     };
+    return ret;
   }
 
   public setIp(ip: string, port: string): void {
@@ -49,17 +75,18 @@ export class WebSocketService {
     this.username = username;
   }
 
-  public connect(): void {
+  public connect(): boolean {
     if (this.client != undefined) {
       this.disconnect();
     }
-    this.createClient();
+    var ret = this.createClient();
     if (!this.client.active) {
       this.client.activate();
     }
+    return ret;
   }
 
-  public createClient(): void {
+  public createClient(): boolean {
     console.log(`ws://${this.ip}:${this.port}/ws`);
     this.client = new Client({
       brokerURL: `ws://${this.ip}:${this.port}/ws`, // Direct WebSocket STOMP endpoint
@@ -72,7 +99,7 @@ export class WebSocketService {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
-    this.registerStompListeners();
+    return this.registerStompListeners();
   }
 
   public disconnect(): void {
@@ -85,11 +112,13 @@ export class WebSocketService {
     subscription.unsubscribe();
   }
 
-  public sendMessage(destination: string, body: string, headers: {} = {}): void {
+  public sendMessage(destination: string, body: string, headers: {} = {}): boolean {
     if (this.client.active) {
       this.client.publish({ destination, body, headers });
+      return true;
     } else {
       console.error('Cannot send message. No STOMP connection.');
+      return false;
     }
   }
 }
