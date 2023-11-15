@@ -1,0 +1,42 @@
+<button class="btn btn-light btn-lg" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button"
+    aria-controls="offcanvasExample">
+    <i class="bi bi-plus-square-fill"></i>
+</button>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add Server</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+            <div class="input-group">
+                <span class="input-group-text" id="addon-wrapping">Username</span>
+                <input [(ngModel)]="username" type="text" class="form-control" placeholder="Username"
+                    aria-label="Username" aria-describedby="addon-wrapping">
+            </div>
+            <div class="input-group mb-3">
+
+                <select class="form-select" id="inputGroupSelect01">
+                    <option selected>ws</option>
+                    <option value="1">wss</option>
+                    <option value="2">http</option>
+                    <option value="3">https</option>
+                </select>
+                <label class="input-group-text" for="inputGroupSelect01">://</label>
+                <input [(ngModel)]="ip" type="text" value="127.0.0.1" class="form-control" placeholder="Server-Adress"
+                    aria-label="Server-Adress" aria-describedby="basic-addon3">
+                <span class="input-group-text">:</span>
+                <input [(ngModel)]="port" value="8080" type="text" class="form-control" placeholder="Port"
+                    aria-label="Port" aria-describedby="button-addon">
+
+            </div>
+            <button (click)="''" class="btn btn-outline-primary" type="button" id="button-addon">Connect</button>
+        </div>
+
+        <button class="btn btn-secondary" type="button">
+            Add Server <i class="bi bi-database-fill-add"></i>
+        </button>
+
+    </div>
+</div>
